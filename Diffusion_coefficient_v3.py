@@ -9,7 +9,6 @@ import numpy as np
 import images
 import particles
 import matplotlib.pyplot as plt
-import cv2
 from images import ImageData
 import algorithms as al
 

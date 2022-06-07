@@ -6,6 +6,7 @@ Created on Wed May 18 22:53:50 2022
 @author: kevi
 """
 
+
 def parameters():
     settings = {
         'doGaussian': True,
@@ -14,6 +15,7 @@ def parameters():
         'histBins': 48,
         'localMaxKernel': 1,
         'histSTD': 2,
-        'peakTolerance': 0
+        'peakTolerance': 0,
+        'histLevel': 0.5
         }
     return settings

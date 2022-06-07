@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 # Dictionary of parameters right here
 params = parameters()
 
+
 def generate_histogram(img, z=3):
     a_frame = img
     max_intensity = np.max(a_frame)
@@ -32,6 +33,7 @@ def generate_histogram(img, z=3):
     plt.ylabel('Pixel Count')
     plt.show()
     return a
+
 
 def calc_histogram(img, show_plot=False):
     """
@@ -68,7 +70,8 @@ def calc_histogram(img, show_plot=False):
         return for_processing, bins, fig
     else:
         return for_processing, bins
-    
+
+
 def hist_analysis(hist):
     """
 
@@ -86,7 +89,7 @@ def hist_analysis(hist):
 
     """
     elements = hist.shape[0]
-    level = 0.5
+    level = params['histLevel']
     data = hist / np.max(hist) # Normalize histogram data
     indices = range(0, elements)
     N = hist.shape[0] - 1 # Limit that any index can take
@@ -109,6 +112,7 @@ def hist_analysis(hist):
             break
     width = trail_i - lead_i
     return width, extreme_val
+
 
 def local_max(img):
     y = img.shape[0]
