@@ -19,8 +19,8 @@ import cv2
 params = parameters()
 
 class Particles:
-    def __init__(self, num_par=0, frame=0):
-        self.number = num_par
+    def __init__(self, frame=None):
+        self.img = None
         self.frame = frame
         
     
@@ -28,7 +28,7 @@ class Particles:
         img = image_data.frame(frame)
         self.img = img
         self.frame = frame
-        print("ImageData frame saved in Particle data.")
+        print("ImageData frame saved as Particles object.")
         return img
         
     def a_histogram(self, z=3):
@@ -57,14 +57,18 @@ class Particles:
         plt.xlabel('Intensity')
         plt.ylabel('Pixel Count')
         plt.show()
-        
-        
+
+
+
     def find_particles(self):
-        if params['doGaussian'] == True:
+        if params['doGaussian']:
             blur_img = gaussian(self.img, params['gaussianSigma'], preserve_range=True)
         else:
             blur_img = self.img
         footprint = mph.disk(params['kernelRadius'])
         th_img = mph.white_tophat(blur_img, footprint)
         self.denoised = th_img.astype(np.float32)
+        self.custom_mask = self.denoised > params['imageThreshold']
+
+
         

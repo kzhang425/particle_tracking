@@ -7,7 +7,6 @@ Created on Thu May 19 08:15:16 2022
 """
 
 import numpy as np
-from numba import jit
 from parameters import parameters
 import cv2
 import matplotlib.pyplot as plt
@@ -75,6 +74,8 @@ def calc_histogram(img, show_plot=False):
 def hist_analysis(hist):
     """
 
+    Inspired by Pystachio algorithm, all credit goes to their work.
+
     Parameters
     ----------
     hist : array
@@ -118,4 +119,7 @@ def local_max(img):
     y = img.shape[0]
     x = img.shape[1]
     k_size = params['localMaxKernel']
+
+
+
     

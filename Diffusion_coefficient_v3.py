@@ -18,8 +18,8 @@ data.read(filename)
 part = particles.Particles()
 part.read(data, 0)
 part.find_particles()
-y = part.denoised
-
+plt.imshow(part.custom_mask)
+# plt.imshow(part.custom_mask)
 max_range = np.mean(part.denoised) + 2*np.std(part.denoised)
 
 a, b, c = al.calc_histogram(part.denoised, True)
