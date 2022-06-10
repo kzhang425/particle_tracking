@@ -10,6 +10,8 @@ import numpy as np
 from parameters import parameters
 import cv2
 import matplotlib.pyplot as plt
+import numba
+from numba import jit
 
 # Dictionary of parameters right here
 params = parameters()
@@ -115,11 +117,17 @@ def hist_analysis(hist):
     return width, extreme_val
 
 
+@jit(nopython=True)
 def local_max(img):
     y = img.shape[0]
     x = img.shape[1]
-    k_size = params['localMaxKernel']
-
+    max_list = []
+    for i in range(1, y-1):
+        for j in range(1, x-1):
+            chunk = img[i-1:i+2, j-1:j+2]
+            if np.argmax(chunk) == 4:
+                max_list.append([i, j])
+    return np.array(max_list)
 
 
     

@@ -20,10 +20,8 @@ part.read(data, 0)
 part.find_particles()
 plt.imshow(part.custom_mask)
 # plt.imshow(part.custom_mask)
-max_range = np.mean(part.denoised) + 2*np.std(part.denoised)
-
-a, b, c = al.calc_histogram(part.denoised, True)
-
-width, height = al.hist_analysis(a)
+points = al.local_max(part.denoised)
+plt.scatter(points[:, 1], points[:, 0])
+plt.show()
 print('ok')
 
