@@ -16,6 +16,6 @@ def parameters():
         'histSTD': 2,  # Standard deviations to use when plotting histogram
         'peakTolerance': 0,
         'histLevel': 0.5,
-        'imageThreshold': 0.5
+        'imageThreshold': 0.7
         }
     return settings

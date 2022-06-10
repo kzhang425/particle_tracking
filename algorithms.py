@@ -118,16 +118,23 @@ def hist_analysis(hist):
 
 
 @jit(nopython=True)
-def local_max(img):
+def local_max(img, mask=None):
     y = img.shape[0]
     x = img.shape[1]
     max_list = []
+    output = []
     for i in range(1, y-1):
         for j in range(1, x-1):
             chunk = img[i-1:i+2, j-1:j+2]
             if np.argmax(chunk) == 4:
                 max_list.append([i, j])
-    return np.array(max_list)
+    if mask is not None:
+        for i, j in max_list:
+            if mask[i, j]:
+                output.append([i, j])
+    else:
+        output = max_list
+    return np.array(output)
 
 
     
