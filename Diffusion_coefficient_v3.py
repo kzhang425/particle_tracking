@@ -20,8 +20,8 @@ part.read(data, 0)
 part.find_particles()
 plt.imshow(part.denoised)
 # plt.imshow(part.custom_mask)
-points = al.local_max(part.denoised, part.custom_mask)
-plt.scatter(points[:, 1], points[:, 0], s=10, color='white')
+points = part.coords
+plt.scatter(points[:, 1], points[:, 0], s=3, color='white')
 plt.show()
 print('ok')
 

@@ -119,6 +119,22 @@ def hist_analysis(hist):
 
 @jit(nopython=True)
 def local_max(img, mask=None):
+    """
+
+    Parameters
+    ----------
+    img : array
+        Input image to be analyzed for local maxima. Usually works best when denoised.
+
+    mask : boolean
+        Boolean mask based on img and must have the same dimensions as img.
+
+    Returns
+    -------
+    output : Numpy array
+        An array containing the coordinates of the local maxima points.
+
+    """
     y = img.shape[0]
     x = img.shape[1]
     max_list = []
@@ -137,4 +153,3 @@ def local_max(img, mask=None):
     return np.array(output)
 
 
-    

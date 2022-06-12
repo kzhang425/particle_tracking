@@ -18,6 +18,7 @@ import cv2
 
 params = parameters()
 
+
 class Particles:
     def __init__(self, frame=None):
         self.img = None
@@ -59,7 +60,6 @@ class Particles:
         plt.show()
 
 
-
     def find_particles(self):
         if params['doGaussian']:
             blur_img = gaussian(self.img, params['gaussianSigma'], preserve_range=True)
@@ -69,6 +69,4 @@ class Particles:
         th_img = mph.white_tophat(blur_img, footprint)
         self.denoised = th_img.astype(np.float32)
         self.custom_mask = self.denoised > params['imageThreshold']
-
-
-        
+        self.coords = al.local_max(self.denoised, self.custom_mask)
