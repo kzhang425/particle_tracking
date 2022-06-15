@@ -10,7 +10,7 @@ Created on Wed May 18 21:27:50 2022
 import numpy as np
 import matplotlib.pyplot as plt
 from parameters import parameters
-from skimage.filters import gaussian, threshold_otsu
+from skimage.filters import gaussian
 import skimage.morphology as mph
 from images import *
 import algorithms as al
@@ -21,6 +21,9 @@ params = parameters()
 
 class Particles:
     def __init__(self, frame=None):
+        self.coords = None
+        self.custom_mask = None
+        self.filtered_img = None
         self.img_no_background = None
         self.img = None
         self.frame = frame
@@ -64,23 +67,34 @@ class Particles:
     def find_particles(self):
         """
 
-        Purpose
-        -------
-        Takes the frame and calculates particle data.
+        Parameters
+        ----------
+        self : Numpy Array
+            Takes the frame of the Particles object.
 
         Returns
         -------
-        Nothing yet.
+        coords : Numpy Array
+            An array containing the array indices of particle centers.
 
         """
+
+        # Optional Gaussian blur, but highly recommended.
         if params['doGaussian']:
             blur_img = gaussian(self.img, params['gaussianSigma'], preserve_range=True)
         else:
             blur_img = self.img
         footprint = mph.disk(params['kernelRadius'])
         th_img = mph.white_tophat(blur_img, footprint)
-        self.denoised = th_img.astype(np.float32)
-        self.custom_mask = self.denoised > params['imageThreshold']
+
+        # For compatibility, the image is turned into a float32 so skimage can still process it.
+        self.filtered_img = th_img.astype(np.float32)
+        self.custom_mask = self.filtered_img > params['imageThreshold']
+
+        # Set background to zero by multiplication with binary mask.
         img_no_background = blur_img * self.custom_mask
         self.img_no_background = img_no_background.astype(np.float32)
+
+        # Use iterative algorithm to determine local maxima and filter out those in the background.
         self.coords = al.local_max(self.img_no_background, self.custom_mask)
+

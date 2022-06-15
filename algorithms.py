@@ -10,7 +10,6 @@ import numpy as np
 from parameters import parameters
 import cv2
 import matplotlib.pyplot as plt
-import numba
 from numba import jit
 
 # Dictionary of parameters right here
@@ -41,6 +40,8 @@ def calc_histogram(img, show_plot=False):
 
     Parameters
     ----------
+    show_plot : Boolean
+        Whether to return the matplotlib figure or not.
     img : Image or NumPy array
         This function takes an image for histogram analysis.
 
