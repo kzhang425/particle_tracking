@@ -18,7 +18,7 @@ data.read(filename)
 part = particles.Particles()
 part.read(data, 0)
 part.find_particles()
-plt.imshow(part.img_no_background)
+plt.imshow(part.filtered_img)
 points = part.coords
 plt.scatter(points[:, 1], points[:, 0], s=3, color='white')
 plt.show()
