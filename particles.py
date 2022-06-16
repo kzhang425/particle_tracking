@@ -84,17 +84,13 @@ class Particles:
             blur_img = gaussian(self.img, params['gaussianSigma'], preserve_range=True)
         else:
             blur_img = self.img
+        blur_img = blur_img - np.min(blur_img)
         footprint = mph.disk(params['kernelRadius'])
-        th_img = mph.white_tophat(blur_img, footprint)
+        custom_mask = blur_img > params['imageThreshold']
+        bool_mask = mph.white_tophat(custom_mask, footprint)
+        self.filtered_img = bool_mask * blur_img
 
-        # For compatibility, the image is turned into a float32 so skimage can still process it.
-        self.filtered_img = th_img.astype(np.float32)
-        self.custom_mask = self.filtered_img > params['imageThreshold']
-
-        # Set background to zero by multiplication with binary mask.
-        img_no_background = blur_img * self.custom_mask
-        self.img_no_background = img_no_background.astype(np.float32)
 
         # Use iterative algorithm to determine local maxima and filter out those in the background.
-        self.coords = al.local_max(self.img_no_background, self.custom_mask)
+        self.coords = al.local_max(self.filtered_img, bool_mask)
 
