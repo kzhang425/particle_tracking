@@ -24,7 +24,6 @@ class Particles:
         self.coords = None
         self.custom_mask = None
         self.filtered_img = None
-        self.img_no_background = None
         self.img = None
         self.frame = frame
         
@@ -85,8 +84,11 @@ class Particles:
         else:
             blur_img = self.img
         blur_img = blur_img - np.min(blur_img)
+        self.blurred = blur_img
+        hist, bins = al.calc_histogram(self.blurred, False)
+        threshold = al.triangle_threshold(hist, bins)
         footprint = mph.disk(params['kernelRadius'])
-        custom_mask = blur_img > params['imageThreshold']
+        custom_mask = blur_img > threshold.astype(np.float32)
         bool_mask = mph.white_tophat(custom_mask, footprint)
         self.filtered_img = bool_mask * blur_img
 

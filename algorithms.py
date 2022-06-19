@@ -57,16 +57,16 @@ def calc_histogram(img, show_plot=False):
     max_intensity = np.max(img)
     z_val = params['histSTD']
     max_range = np.mean(img) + z_val*np.std(img)
-    for_processing = cv2.calcHist(img, channels=[0], mask=None,
-                                  histSize=[params['histBins']], 
-                                  ranges=[0, max_range])
-    bins = np.linspace(0, max_range, params['histBins'])
-    for_processing = np.array(for_processing.T[0])
-    for_processing[0] = 0 # First peak big because of background
+    for_processing, bins = np.histogram(img, bins=params['histBins'])
+    # bins = np.linspace(0, max_range, params['histBins'])
+    last_num = bins[-1]
+    bins = bins[:-1]
+    for_processing = np.array(for_processing)
+    # for_processing[0] = 0  # First peak big because of background
     if show_plot:
         fig, ax = plt.subplots()
         ax.bar(bins, for_processing, 
-               width=max_range/params['histBins'], 
+               width=last_num/params['histBins'],
                edgecolor='black', color='purple')
         plt.show()
         return for_processing, bins, fig
@@ -74,10 +74,69 @@ def calc_histogram(img, show_plot=False):
         return for_processing, bins
 
 
+def triangle_threshold(hist, bins):
+    """
+
+    Parameters
+    ----------
+    bins : NumPy array
+        Input is a NumPy array representing the bins used in said histogram.
+    hist : NumPy array
+        Input is a NumPy array that represents a histogram to be analyzed via triangle thresholding.
+
+    Returns
+    -------
+
+    """
+
+    print("Finding threshold via triangle method...")
+
+    # First find maximum of the entire histogram.
+    x_max = bins[np.argmax(hist)]
+    y_max = np.max(hist)
+    x_base = bins[-1]
+
+    # The y_base should not really change here. Baseline should generally be zero.
+    y_base = 0
+
+    # m1 is the slope of the first line, peak to baseline.
+    m1 = (y_max - y_base) / (x_max - x_base)
+    b1 = y_max - m1 * x_max
+
+    # Make vectors that represent histogram values.
+    x_bar = bins
+    y_bar = m1 * x_bar + b1
+
+    # Set the slope of the perpendicular line as "m2". This slope will not change from
+    # each histogram point.
+    m2 = -1/m1
+
+    # Iterate through the points that start from the maximum of the histogram until the far end.
+    # Note that the iterable here is an index and NOT the actual x value.
+    max_dist = 0
+    for i in range(np.argmax(hist), len(hist)):
+        hist_point = [bins[i], hist[i]]
+        b2 = hist[i] - m2 * bins[i]
+        # Use the classic MATLAB way of solving linear equations
+        A_mat = np.array([[m2, -1],
+                          [m1, -1]])
+        b_vec = np.array([[-b2],
+                          [-b1]])
+        intersection = np.matmul(np.linalg.inv(A_mat), b_vec)
+        intersection = intersection.flatten()
+        dist = (hist_point[0] - intersection[0]) ** 2 + (hist_point[1] - intersection[1]) ** 2
+        if dist > max_dist:
+            max_dist = dist
+            best_coords = hist_point
+    return best_coords[0]
+
+
+
 def hist_analysis(hist):
     """
 
-    Inspired by Pystachio algorithm, all credit goes to their work.
+    Inspired by Pystachio algorithm, all credit goes to their work. Unfortunately it is not very
+    compatible with the other algorithms and code that are used for the rest of the project
 
     Parameters
     ----------

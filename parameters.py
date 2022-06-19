@@ -13,7 +13,7 @@ def parameters():
         'doGaussian': True,
         'gaussianSigma': 2,  # Sigma for gaussian blurring
         'kernelRadius': 15,  # Disc kernel size for top hat transformation
-        'histBins': 48,  # How many bins to calculate for histogram
+        'histBins': 128,  # How many bins to calculate for histogram
         'histSTD': 2,  # Standard deviations to use when plotting histogram
         'peakTolerance': 0,
         'histLevel': 0.5,
