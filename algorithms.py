@@ -114,6 +114,7 @@ def triangle_threshold(hist, bins):
     # Iterate through the points that start from the maximum of the histogram until the far end.
     # Note that the iterable here is an index and NOT the actual x value.
     max_dist = 0
+    best_coords = None
     for i in range(np.argmax(hist), len(hist)):
         hist_point = [bins[i], hist[i]]
         b2 = hist[i] - m2 * bins[i]
@@ -128,53 +129,57 @@ def triangle_threshold(hist, bins):
         if dist > max_dist:
             max_dist = dist
             best_coords = hist_point
-    return best_coords[0]
-
-
-
-def hist_analysis(hist):
-    """
-
-    Inspired by Pystachio algorithm, all credit goes to their work. Unfortunately it is not very
-    compatible with the other algorithms and code that are used for the rest of the project
-
-    Parameters
-    ----------
-    hist : array
-        Inputs an array that represents the histogram of interest.
-
-    Returns
-    -------
-    width : float
-        The width of the first notable peak in histogram, measured in bins
-    extreme_val : int
-        Where the extreme value can be found, at index of histogram
-
-    """
-    elements = hist.shape[0]
-    level = params['histLevel']
-    data = hist / np.max(hist) # Normalize histogram data
-    indices = range(0, elements)
-    N = hist.shape[0] - 1 # Limit that any index can take
-    if hist[0] < level:
-        center = np.argmax(hist)
+    if best_coords is not None:
+        return best_coords[0]
     else:
-        center = np.argmin(hist)
-    extreme_val = indices[center]
-    for e in indices[:-1]:
-        if (np.sign(data[e] - level) != np.sign(data[e + 1] - level)) and e < indices[-1]:
-            lead_i = e
-            break
-    ratio_lead = (level - data[lead_i])/(data[lead_i + 1] - data[lead_i])
-    lead_index = indices[lead_i] + ratio_lead * (indices[lead_i + 1] - indices[lead_i])
-    
-    # Now we find the trailing index using the established "center" variable
-    for e in indices[center:-1]:
-        if np.sign(data[e] - level) != np.sign(data[e + 1] - level) and e < indices[-1]:
-            trail_i = e
-            break
-    width = trail_i - lead_i
-    return width, extreme_val
+        print("Error: Best coordinates not found.")
+        return 0
+
+
+
+# def hist_analysis(hist):
+#     """
+#
+#     Inspired by Pystachio algorithm, all credit goes to their work. Unfortunately it is not very
+#     compatible with the other algorithms and code that are used for the rest of the project
+#
+#     Parameters
+#     ----------
+#     hist : array
+#         Inputs an array that represents the histogram of interest.
+#
+#     Returns
+#     -------
+#     width : float
+#         The width of the first notable peak in histogram, measured in bins
+#     extreme_val : int
+#         Where the extreme value can be found, at index of histogram
+#
+#     """
+#     elements = hist.shape[0]
+#     level = params['histLevel']
+#     data = hist / np.max(hist) # Normalize histogram data
+#     indices = range(0, elements)
+#     N = hist.shape[0] - 1 # Limit that any index can take
+#     if hist[0] < level:
+#         center = np.argmax(hist)
+#     else:
+#         center = np.argmin(hist)
+#     extreme_val = indices[center]
+#     for e in indices[:-1]:
+#         if (np.sign(data[e] - level) != np.sign(data[e + 1] - level)) and e < indices[-1]:
+#             lead_i = e
+#             break
+#     ratio_lead = (level - data[lead_i])/(data[lead_i + 1] - data[lead_i])
+#     lead_index = indices[lead_i] + ratio_lead * (indices[lead_i + 1] - indices[lead_i])
+#
+#     # Now we find the trailing index using the established "center" variable
+#     for e in indices[center:-1]:
+#         if np.sign(data[e] - level) != np.sign(data[e + 1] - level) and e < indices[-1]:
+#             trail_i = e
+#             break
+#     width = trail_i - lead_i
+#     return width, extreme_val
 
 
 @jit(nopython=True)
@@ -186,7 +191,7 @@ def local_max(img, mask=None):
     img : array
         Input image to be analyzed for local maxima. Usually works best when denoised.
 
-    mask : boolean
+    mask : boolean array
         Boolean mask based on img and must have the same dimensions as img.
 
     Returns
@@ -203,6 +208,8 @@ def local_max(img, mask=None):
     for i in range(1, y-1):
         for j in range(1, x-1):
             chunk = img[i-1:i+2, j-1:j+2]
+
+            # Check if the pixel currently is the max of the neighborhood
             if np.argmax(chunk) == 4:
                 max_list.append([i, j])
     if mask is not None:
@@ -213,4 +220,9 @@ def local_max(img, mask=None):
         output = max_list
     return np.array(output)
 
+
+def find_radii(img, points=None):
+    if points is None:
+        print("No points were given to calculate radii from.")
+        return 0
 

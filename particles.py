@@ -88,8 +88,9 @@ class Particles:
         hist, bins = al.calc_histogram(self.blurred, False)
         threshold = al.triangle_threshold(hist, bins)
         footprint = mph.disk(params['kernelRadius'])
-        custom_mask = blur_img > threshold.astype(np.float32)
+        custom_mask = blur_img > threshold
         bool_mask = mph.white_tophat(custom_mask, footprint)
+        self.mask = bool_mask
         self.filtered_img = bool_mask * blur_img
 
 
