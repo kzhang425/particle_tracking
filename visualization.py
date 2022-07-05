@@ -22,9 +22,5 @@ This section is for histogram analysis
 """
 Now test the true center-finding algorithm
 """
-point = part.coords[16, :]
-print(point)
-a, b = misc.find_radius(point, part.mask)
-print(a)
-print(b)
+print(part.particle_data)
 

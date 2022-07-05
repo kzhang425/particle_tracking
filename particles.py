@@ -28,11 +28,12 @@ class Particles:
         self.frame = frame
         
     
-    def read(self, image_data, frame):
+    def read(self, image_data, frame, confirm=False):
         img = image_data.frame(frame)
         self.img = img
         self.frame = frame
-        print("ImageData frame saved as Particles object.")
+        if confirm:
+            print("ImageData frame saved as Particles object.")
         return img
         
     def a_histogram(self, z=3):
@@ -95,5 +96,16 @@ class Particles:
 
 
         # Use iterative algorithm to determine local maxima and filter out those in the background.
-        self.coords = al.local_max(self.filtered_img, bool_mask)
+        self.peak_list = al.local_max(self.filtered_img, bool_mask)
+
+        # Use the list of local maxima to calculate particle centers, radii, and intensity.
+        some_data = al.find_radii(self.filtered_img, self.mask, self.peak_list)
+
+        # Add which frame the data belongs to for ease of identification and modularization.
+        full_particle_data = []
+        for row in some_data:
+            line = [self.frame, row[0], row[1], row[2], row[3]]
+            full_particle_data.append(line)
+
+        self.particle_data = np.array(full_particle_data)
 

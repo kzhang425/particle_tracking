@@ -11,6 +11,7 @@ from parameters import parameters
 import cv2
 import matplotlib.pyplot as plt
 from numba import jit
+import misc
 
 # Dictionary of parameters right here
 params = parameters()
@@ -86,10 +87,10 @@ def triangle_threshold(hist, bins):
 
     Returns
     -------
-
+    float
+        The x coordinate of the histogram where the histogram is to be thresholded.
     """
 
-    print("Finding threshold via triangle method...")
 
     # First find maximum of the entire histogram.
     x_max = bins[np.argmax(hist)]
@@ -204,7 +205,6 @@ def local_max(img, mask=None):
     x = img.shape[1]
     max_list = []
     output = []
-    print('Finding local maxima...')
     for i in range(1, y-1):
         for j in range(1, x-1):
             chunk = img[i-1:i+2, j-1:j+2]
@@ -221,8 +221,16 @@ def local_max(img, mask=None):
     return np.array(output)
 
 
-def find_radii(img, points=None):
+def find_radii(img, mask, points=None):
     if points is None:
         print("No points were given to calculate radii from.")
         return 0
+
+    stats = []
+    for point in points:
+        intensity = img[point[0], point[1]]
+        center, radius = misc.find_radius(point, mask)
+        stats.append([center[0], center[1], radius, intensity])
+
+    return np.array(stats)
 
