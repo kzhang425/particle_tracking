@@ -234,3 +234,22 @@ def find_radii(img, mask, points=None):
 
     return np.array(stats)
 
+
+def score(dot, array):
+    """
+
+    Parameters
+    ----------
+    dot : array-like
+        1D list or array representing a set of Dot() parameters
+    array : array-like
+        Array to score the dot with, 2D array. Will iterate through every row for a given frame,
+        score, and find the best candidate. Otherwise, return None.
+
+    Returns
+    -------
+
+    """
+
+    # max_dist will be the checkpoint for whether a particle can be assigned or not.
+    max_dist = params['maxDistance']

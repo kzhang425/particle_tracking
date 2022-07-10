@@ -16,7 +16,8 @@ def parameters():
         'histBins': 128,  # How many bins to calculate for histogram
         'histSTD': 2,  # Standard deviations to use when plotting histogram
         'peakTolerance': 0,
+        'imageAmplify': 10,  # How much contrast do we want for filtered image
         'histLevel': 0.5,
-        'imageThreshold': 5
+        'maxDistance': 30  # In pixels, how far is a particle allowed to go in one frame
         }
     return settings
